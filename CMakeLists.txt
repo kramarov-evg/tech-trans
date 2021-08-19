@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( EstimateDirection )
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+add_executable( EstimateDirection main.cpp )
+target_link_libraries( EstimateDirection ${OpenCV_LIBS} )
