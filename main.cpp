@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
   int frameHeight = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
   int averageArrowStartX = frameWidth / 2;
   int averageArrowStartY = frameHeight / 2;
-  int averageArrowLen = std::min(frameWidth, frameHeight) / 4;
+  double averageArrowLen = std::min(frameWidth, frameHeight) / 4.;
   cv::TermCriteria termcrit(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS,
                             20, 0.01);
   cv::Size subPixWinSize(10, 10), winSize(31, 31);
@@ -83,6 +83,9 @@ int main(int argc, char** argv) {
       points[1].clear();
     } else {
       cap >> image;
+      if (image.empty()) {
+        break;
+      }
       cvtColor(image, gray, cv::COLOR_BGR2GRAY);
 
       goodFeaturesToTrack(gray, points[1], MAX_N_FEATURES, 0.001, 1, cv::Mat(),
@@ -96,7 +99,9 @@ int main(int argc, char** argv) {
         arrows.clear();
         status.clear();
         err.clear();
-        if (prevGray.empty()) gray.copyTo(prevGray);
+        if (prevGray.empty()) {
+          gray.copyTo(prevGray);
+        }
         calcOpticalFlowPyrLK(prevGray, gray, points[0], points[1], status, err,
                              winSize, 3, termcrit, 0, 0.001);
       }
@@ -129,10 +134,10 @@ int main(int argc, char** argv) {
         averageAr.angle += ar.angle;
       }
       averageAr.angle /= arrows.size();
-      averageAr.end.x = (int)(averageAr.start.x -
-                              averageAr.length * cos(averageAr.angle));
-      averageAr.end.y = (int)(averageAr.start.y -
-                              averageAr.length * sin(averageAr.angle));
+      averageAr.end.x =
+          (int)(averageAr.start.x - averageAr.length * cos(averageAr.angle));
+      averageAr.end.y =
+          (int)(averageAr.start.y - averageAr.length * sin(averageAr.angle));
       cv::arrowedLine(image, averageAr.start, averageAr.end,
                       cv::Scalar((0), (255), (0), 0), 3);
       imshow("Train direction detection", image);
