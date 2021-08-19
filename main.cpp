@@ -11,18 +11,12 @@
 
 static void help() {
   // print a welcome message, and the OpenCV version
-  std::cout << "\nThis is a demo of Lukas-Kanade optical flow lkdemo(),\n"
-               "Using OpenCV version "
-            << CV_VERSION << std::endl;
-  std::cout
-      << "\nIt uses camera by default, but you can provide a path to video as "
-         "an argument.\n";
-  std::cout << "\nHot keys: \n"
-               "\tESC - quit the program\n"
-               "\tr - auto-initialize tracking\n"
-               "\tc - delete all the points\n"
-               "\tn - switch the \"night\" mode on/off\n"
-               "To add/remove a feature point click it\n"
+  std::cout << "Single object motion direction estimation with OpenCV"
+            << std::endl;
+  std::cout << "Args:" << std::endl
+            << "\tpath_to_video: Path to video file to work on" << std::endl;
+  std::cout << "Hot keys:" << std::endl
+            << "\tESC - quit the program\n"
             << std::endl;
 }
 
@@ -41,6 +35,7 @@ bool operator>(const Arrow& a1, const Arrow& a2) {
 }
 
 int main(int argc, char** argv) {
+  help();
   if (argc != 2) {
     std::cout << "One and only one option must be provided: path to video file"
               << std::endl;
@@ -68,7 +63,6 @@ int main(int argc, char** argv) {
    */
   const int MAX_N_FEATURES = 800, SHIFT_ACCEPTANCE_THRESHOLD = 15,
             TOP_N_ARROWS = 5, FRAMES_BETWEEN_REINIT = 20;
-  help();
   cv::namedWindow("Train direction detection", cv::WINDOW_AUTOSIZE);
   cv::Mat gray, prevGray, image;
 
@@ -142,7 +136,9 @@ int main(int argc, char** argv) {
                       cv::Scalar((0), (255), (0), 0), 3);
       imshow("Train direction detection", image);
       char c = (char)cv::waitKey(10);
-      if (c == 27) break;
+      if (c == 27) {
+        break;
+      }
       std::swap(points[1], points[0]);
       cv::swap(prevGray, gray);
     }
